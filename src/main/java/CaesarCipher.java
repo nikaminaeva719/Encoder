@@ -6,8 +6,6 @@ public class CaesarCipher {
             + ".,\":!? +-*/\\@#$%^&(){}[];'|`~=_©«»—"
             + "0123456789";
 
-
-
     public String encrypt(String message, int key) {
         StringBuilder builder = new StringBuilder();
         for (char aChar : message.toCharArray()) {
