@@ -1,17 +1,22 @@
+import lombok.SneakyThrows;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Bruteforce {
+
+    @SneakyThrows
     public void bruteforce() {
         ConsoleHelper.writeMessage("Введите путь к файлу:");
         String src = ConsoleHelper.readString();
-        Path dst = ConsoleHelper.buildFileName(src,"_bruteforce");
+        Path dst = ConsoleHelper.buildFileName(src, "_bruteforce");
         CaesarCipher caesarCipher = new CaesarCipher();
-        try (BufferedReader reader = new BufferedReader(new FileReader(src));
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(src));
              BufferedWriter writer = Files.newBufferedWriter(dst)) {
             int length = caesarCipher.alphabetLength();
             StringBuilder builder = new StringBuilder();
@@ -36,8 +41,6 @@ public class Bruteforce {
                 }
 
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
