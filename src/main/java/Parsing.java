@@ -4,17 +4,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 
 public class Parsing {
-
-    //результат 100% не гарантируем
-    //дополнительный файл
-    //сравнение зашифрованного файла с незашифрованного
-    //явный конструктор
-
 
     @SneakyThrows
     public void parse() {
@@ -22,7 +17,7 @@ public class Parsing {
         String pathEcnr = ConsoleHelper.readString();
         ConsoleHelper.writeMessage("Введить путь к файлу для набора статистики.");
         String pathStat = ConsoleHelper.readString();
-        ConsoleHelper.buildFileName(pathEcnr, "_pars");
+        Path dst = ConsoleHelper.buildFileName(pathEcnr, "_pars");
         Map<Character, Integer> mapEncr = fillMapValues(pathEcnr);
         Map<Character, Integer> mapStat = fillMapValues(pathStat);
         List<Map.Entry<Character, Integer>> listEncr = mapToList(mapEncr);
@@ -32,7 +27,7 @@ public class Parsing {
             decr.put(listEncr.get(i).getKey(), listStat.get(i).getKey());
         }
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(pathEcnr));
-             BufferedWriter writer = Files.newBufferedWriter(Paths.get(pathStat))) {
+             BufferedWriter writer = Files.newBufferedWriter(dst)) {
             while (reader.ready()) {
                 StringBuilder builder = new StringBuilder();
                 String str = reader.readLine();
@@ -44,10 +39,6 @@ public class Parsing {
                 writer.write(builder.toString());
                 writer.newLine();
             }
-            //затестить, начальный кусочек и статистика вся книга
-            //рефакторинг
-            //закоммитить ВЕСЬ проект!!!!!!!!!!!!!!
-            //АНОНИМНЫЕ КЛАССЫ
 
         }
     }

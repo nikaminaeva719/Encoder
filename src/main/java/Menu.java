@@ -18,7 +18,7 @@ public class Menu extends CaesarCipher {
                 case "1" -> new EncryptedDecrypted().encrypted(true);
                 case "2" -> new EncryptedDecrypted().encrypted(false);
                 case "3" -> new Bruteforce().bruteforce();
-                case "4" -> new FrequencyAnalysis().frequencyAnalysis();
+                case "4" -> new Parsing().parse();
                 case "5" -> {
                     ConsoleHelper.writeMessage("Выход из программы.");
                     return;
