@@ -1,6 +1,5 @@
 import lombok.SneakyThrows;
 
-import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,16 +14,8 @@ public class EncryptedDecrypted {
         int key = ConsoleHelper.readInt();
         Path dst = ConsoleHelper.buildFileName(src, (flag ? "_encr" : "_decr"));
         CaesarCipher caesar = new CaesarCipher();
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(src))) {
-            try (BufferedWriter writer = Files.newBufferedWriter(dst)) {
-                while (reader.ready()) {
-                    String string = reader.readLine();
-                    String encryptedDecrypted = flag ? caesar.encrypt(string, key) : caesar.decrypt(string, key);
-                    writer.write(encryptedDecrypted);
-                    writer.newLine();
-                }
-            }
-        }
+        String content = Files.readString(Paths.get(src));
+        Files.writeString(dst, flag ? caesar.encrypt(content, key) : caesar.decrypt(content, key));
         ConsoleHelper.writeMessage("Результат получен:" + dst.getFileName());
     }
 }
