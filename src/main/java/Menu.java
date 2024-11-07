@@ -1,4 +1,6 @@
-public class Menu extends CaesarCipher {
+public class Menu {
+
+
     public static void main(String[] args) {
 
         ConsoleHelper.writeMessage("Привет, пользователь!");
