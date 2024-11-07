@@ -6,7 +6,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Parsing {
@@ -18,10 +20,8 @@ public class Parsing {
         ConsoleHelper.writeMessage("Введить путь к файлу для набора статистики.");
         String pathStat = ConsoleHelper.readString();
         Path dst = ConsoleHelper.buildFileName(pathEcnr, "_pars");
-        Map<Character, Integer> mapEncr = fillMapValues(pathEcnr);
-        Map<Character, Integer> mapStat = fillMapValues(pathStat);
-        List<Map.Entry<Character, Integer>> listEncr = mapToList(mapEncr);
-        List<Map.Entry<Character, Integer>> listStat = mapToList(mapStat);
+        List<Map.Entry<Character, Integer>> listEncr = convertToList(pathEcnr);
+        List<Map.Entry<Character, Integer>> listStat = convertToList(pathStat);
         Map<Character, Character> decr = new HashMap<>();
         for (int i = 0; i < listEncr.size(); i++) {
             decr.put(listEncr.get(i).getKey(), listStat.get(i).getKey());
@@ -39,48 +39,25 @@ public class Parsing {
                 writer.write(builder.toString());
                 writer.newLine();
             }
-
         }
     }
-
     @SneakyThrows
-    private Map<Character, Integer> fillMapValues(String path) {
-        Map<Character, Integer> map = new HashMap<>(); // ctr alt T
-        StringBuilder builder = new StringBuilder();
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
-            while (reader.ready()) {
-                builder.append(reader.readLine()).append(System.lineSeparator());
-            }
+    private List<Map.Entry<Character, Integer>> convertToList(String path) {
+        Map<Character, Integer> map = new HashMap<>();
+        String content = Files.readString(Paths.get(path));
+        for (char aChar : content.toCharArray()) {
+            map.merge(aChar, 1, Integer::sum);
         }
-        for (char aChar : builder.toString().toCharArray()) {
-            if (!map.containsKey(aChar)) {
-                map.put(aChar, 1);
-            } else {
-                int value = map.get(aChar);
-                map.put(aChar, value + 1);
-            }
-
-        }
-        return map;
-    }
-
-    private List<Map.Entry<Character, Integer>> mapToList(Map<Character, Integer> map) {
-        Set<Map.Entry<Character, Integer>> set = map.entrySet();
-        List<Map.Entry<Character, Integer>> list = new ArrayList<>(set);
-        Comparator<Map.Entry<Character, Integer>> comparator = new Comparator<Map.Entry<Character, Integer>>() {
-            @Override
-            public int compare(Map.Entry<Character, Integer> o1, Map.Entry<Character, Integer> o2) {
-                if (o1.getValue() > o2.getValue()) {
-                    return -1;
-                } else if (o1.getValue() < o2.getValue()) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        };
-        list.sort(comparator);
+        List<Map.Entry<Character, Integer>> list = new ArrayList<>(map.entrySet());
+        list.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
         return list;
     }
 
+    @SneakyThrows
+    private List<Map.Entry<String, Long>> convertToList1(String path) {
+        return Arrays.stream(Files.readString(Paths.get(path)).split(""))
+                .collect(Collectors.groupingBy(str -> str, Collectors.counting())).entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .toList();
+    }
 }
